@@ -110,3 +110,4 @@ class Armstrongview(APIView):
             res="the number is not a armstrong"
         return Response(data=res)
 
+

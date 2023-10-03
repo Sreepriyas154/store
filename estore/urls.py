@@ -28,6 +28,7 @@ from api.views import Wordcountview
 from api.views import Primenumview
 from api.views import Palindromeview
 from api.views import Armstrongview
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path("products",Productsview.as_view()),
