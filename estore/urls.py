@@ -21,13 +21,15 @@ from django.urls import path
 #from api.views import Subview
 #from api.views import Multiview
 # from  api.views import Divview
-from api.views import Cubeviwe
-from api.views import Numchkview
-from api.views import Factview
-from api.views import Wordcountview
-from api.views import Primenumview
-from api.views import Palindromeview
-from api.views import Armstrongview
+# from api.views import Cubeviwe
+# from api.views import Numchkview
+# from api.views import Factview
+# from api.views import Wordcountview
+# from api.views import Primenumview
+# from api.views import Palindromeview
+# from api.views import Armstrongview
+from api.views import Productsview,Productdetailview
+from api.views import Reviewsview,Reviewdetailsview
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -36,13 +38,15 @@ urlpatterns = [
     # path("sub", Subview.as_view()),
     # path("mul", Multiview.as_view()),
     # path("div", Divview.as_view()),
-    path("cube",Cubeviwe.as_view()),
-    path("numcheck",Numchkview.as_view()),
-    path("fact",Factview.as_view()),
-    path("wordcount",Wordcountview.as_view()),
-    path("prime",Primenumview.as_view()),
-    path("palindrom",Palindromeview.as_view()),
-    path("armstrong",Armstrongview.as_view()),
-
-
+    # path("cube",Cubeviwe.as_view()),
+    # path("numcheck",Numchkview.as_view()),
+    # path("fact",Factview.as_view()),
+    # path("wordcount",Wordcountview.as_view()),
+    # path("prime",Primenumview.as_view()),
+    # path("palindrom",Palindromeview.as_view()),
+    # path("armstrong",Armstrongview.as_view()),
+    path("products",Productsview.as_view()),
+    path("products/<int:id>",Productdetailview.as_view()),
+    path("reviews",Reviewsview.as_view()),
+    path("reviews/<int:id>",Reviewdetailsview.as_view()),
 ]

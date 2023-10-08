@@ -3,10 +3,12 @@ from django.shortcuts import render
 # Create your views here.
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from api.models import Books,Reviews
+from api.serializers import BookSerialzers,ReviewSerializer
 # class Productsview(APIView):
 #     def get(self,request,*args,**kwargs):
 #         return Response({"msg":"inside the product"})
+
 #
 #
 # class Addview(APIView):
@@ -35,79 +37,155 @@ from rest_framework.response import Response
 #         res=int(num1)/int(num2)
 #         return Response({"msg":res})
 #
-class Cubeviwe(APIView):
-    def post(self,request,*args,**kwargs):
-        n=int(request.data.get("num"))
-        res=n**3
-        return Response({"Result":res})
+# class Cubeviwe(APIView):
+#     def post(self,request,*args,**kwargs):
+#         n=int(request.data.get("num"))
+#         res=n**3
+#         return Response({"Result":res})
+#
+# class Numchkview(APIView):
+#     def post(self,request,*args,**kwargs):
+#         n=int(request.data.get("num"))
+#         if(n%2==0):
+#             res="number is even"
+#         else:
+#             res="number is odd"
+#         return Response(data=res)
+# class Factview(APIView):
+#     def post(self,request,*args,**kwargs):
+#         n=int(request.data.get("num"))
+#         res=1
+#         for i in range(1,(n+1)):
+#             res=res*i
+#         return Response(data=res)
+#
+# class Wordcountview(APIView):
+#     def post(self,request,*args,**kwargs):
+#         txt=request.data.get("txt")
+#         words=txt.split(" ")
+#         wc={}
+#         for w in words:
+#             if w in wc:
+#                 wc[w]+=1
+#             else:
+#                 wc[w]=1
+#         return Response(data=wc)
+# class Primenumview(APIView):
+#     def post(self,request,*args,**kwargs):
+#         n=int(request.data.get("num"))
+#         f=0
+#         for i in range(1,n+1):
+#             if(n%i)==0:
+#                 f=f+1
+#         if f==2:
+#             res="the number is prime"
+#         else:
+#             res="the number is not a prime"
+#         return Response(data=res)
+# class Palindromeview(APIView):
+#     def post(self,request,*args,**kwargs):
+#         n=int(request.data.get("num"))
+#         rev=0
+#         m=n
+#         while n>0:
+#             rm=n%10
+#             rev=rev*10+rm
+#             n=n//10
+#         if m==rev:
+#             res="the number is plaindrome"
+#         else:
+#             res="not a palindome"
+#         return Response(data=res)
+#
+# class Armstrongview(APIView):
+#     def post(self,request,*args,**kwargs):
+#         n=int(request.data.get("num"))
+#         rev=0
+#         m=n
+#         while n>0:
+#             rm=n%10
+#             rev=rev+rm*rm*rm
+#             n=n//10
+#         if m==rev:
+#             res="the number is armstrong "
+#         else:
+#             res="the number is not a armstrong"
+#         return Response(data=res)
 
-class Numchkview(APIView):
+class Productsview(APIView):
+    def get(self,request,*args,**kwargs):
+        qs=Books.objects.all()
+        serializer=BookSerialzers(qs,many=True)
+        return Response(data=serializer.data)
     def post(self,request,*args,**kwargs):
-        n=int(request.data.get("num"))
-        if(n%2==0):
-            res="number is even"
+        # bname=request.data.get("name")
+        # bauthor=request.data.get("author")
+        # bprice=int(request.data.get("price"))
+        # bpublication=request.data.get("publication")
+        # bqty=int(request.data.get("qty"))
+        # Books.objects.create(name=bname,author=bauthor,price=bprice,publication=bpublication,qty=bqty)
+        serializer=BookSerialzers(data=request.data)
+        if serializer.is_valid():
+            Books.objects.create(**serializer.validated_data)
+            return Response(data=serializer.data)
         else:
-            res="number is odd"
-        return Response(data=res)
-class Factview(APIView):
-    def post(self,request,*args,**kwargs):
-        n=int(request.data.get("num"))
-        res=1
-        for i in range(1,(n+1)):
-            res=res*i
-        return Response(data=res)
+            return  Response(data=serializer.errors)
 
-class Wordcountview(APIView):
-    def post(self,request,*args,**kwargs):
-        txt=request.data.get("txt")
-        words=txt.split(" ")
-        wc={}
-        for w in words:
-            if w in wc:
-                wc[w]+=1
-            else:
-                wc[w]=1
-        return Response(data=wc)
-class Primenumview(APIView):
-    def post(self,request,*args,**kwargs):
-        n=int(request.data.get("num"))
-        f=0
-        for i in range(1,n+1):
-            if(n%i)==0:
-                f=f+1
-        if f==2:
-            res="the number is prime"
-        else:
-            res="the number is not a prime"
-        return Response(data=res)
-class Palindromeview(APIView):
-    def post(self,request,*args,**kwargs):
-        n=int(request.data.get("num"))
-        rev=0
-        m=n
-        while n>0:
-            rm=n%10
-            rev=rev*10+rm
-            n=n//10
-        if m==rev:
-            res="the number is plaindrome"
-        else:
-            res="not a palindome"
-        return Response(data=res)
 
-class Armstrongview(APIView):
-    def post(self,request,*args,**kwargs):
-        n=int(request.data.get("num"))
-        rev=0
-        m=n
-        while n>0:
-            rm=n%10
-            rev=rev+rm*rm*rm
-            n=n//10
-        if m==rev:
-            res="the number is armstrong "
+class Productdetailview(APIView):
+    def get(self,request,*args,**kwargs):
+        id=kwargs.get("id")
+        book=Books.objects.get(id=id)
+        serializer=BookSerialzers(book,many=False)#deserializaion
+        return  Response(data=serializer.data)
+    def delete(self,request,*args,**kwargs):
+        id=kwargs.get("id")
+        Books.objects.get(id=id).delete()
+        return Response(data="deleted")
+    def put(self,request,*args,**kwargs):
+        id=kwargs.get("id")
+        serializer=BookSerialzers(data=request.data)
+        if serializer.is_valid():
+            Books.objects.filter(id=id).update(**serializer.validated_data)
+            return Response(data=serializer.data)
         else:
-            res="the number is not a armstrong"
-        return Response(data=res)
+            return Response(data=serializer.errors)
+
+
+#model serializer use
+class Reviewsview(APIView):
+    def get(self,request,*args,**kwargs):
+        reviews=Reviews.objects.all()
+        serializer=ReviewSerializer(reviews,many=True)
+        return Response(data=serializer.data)
+    def post(self,request,*args,**kwargs):
+        serializer=ReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data)
+        else:
+            return Response(data==serializer.errors)
+
+class Reviewdetailsview(APIView):
+    def get(self,request,*args,**kwargs):
+        id=kwargs.get("id")
+        qs=Reviews.objects.get(id=id)
+        serializer=ReviewSerializer(qs,many=False)
+        return Response(data=serializer.data)
+    def put(self,request,*args,**kwargs):
+        id=kwargs.get("id")
+        qs=Reviews.objects.get(id=id)
+        serializer=ReviewSerializer(instance=qs,data=request.data)#modelserializer step
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data)
+        else:
+            return Response(data=serializer.errors)
+
+    def delete(self,request,*args,**kwargs):
+        id=kwargs.get("id")
+        Reviews.objects.get(id=id).delete()
+        return Response(data="deleted")
+
 
 
