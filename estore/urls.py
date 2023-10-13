@@ -30,6 +30,15 @@ from django.urls import path
 # from api.views import Armstrongview
 from api.views import Productsview,Productdetailview
 from api.views import Reviewsview,Reviewdetailsview
+from api.views import Productsviewsetview,Productmodelviewsetview
+from api.views import Reviewmodelviewsetview
+from api.views import Usersview
+from rest_framework.routers import DefaultRouter
+router=DefaultRouter()
+router.register("api/v1/products",Productsviewsetview,basename="products")
+router.register("api/v2/products",Productmodelviewsetview,basename="books")
+router.register("api/v2/reviews",Reviewmodelviewsetview,basename="review")
+router.register("register",Usersview,basename="users")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -49,4 +58,4 @@ urlpatterns = [
     path("products/<int:id>",Productdetailview.as_view()),
     path("reviews",Reviewsview.as_view()),
     path("reviews/<int:id>",Reviewdetailsview.as_view()),
-]
+]+router.urls
