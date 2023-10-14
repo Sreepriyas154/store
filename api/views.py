@@ -9,6 +9,7 @@ from rest_framework.viewsets import ViewSet,ModelViewSet
 from api.serializers import Userserializer
 from django.contrib.auth.models import User
 from rest_framework import authentication,permissions
+from  rest_framework.decorators import action
 # class Productsview(APIView):
 #     def get(self,request,*args,**kwargs):
 #         return Response({"msg":"inside the product"})
@@ -232,6 +233,20 @@ class Productsviewsetview(ViewSet):
 class Productmodelviewsetview(ModelViewSet):
     serializer_class = BookSerialzers
     queryset = Books.objects.all()
+    authentication_classes = [authentication.BasicAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    @action(methods=["post"],detail=True)
+    def add_review(self,request,*args,**kwargs):
+        id=kwargs.get("pk")
+        qs=Books.objects.get(id=id)
+        user=request.user
+        Reviews.objects.create(book=qs,user=user,comment=request.data.get("comment"),rating=request.data.get("rating"))
+        return Response(data="created")
+    @action(methods=["get"],detail=True)
+    def get_review(self,request,*args,**kwargs):
+
+
 class Reviewmodelviewsetview(ModelViewSet):
     serializer_class = ReviewSerializer
     queryset = Reviews.objects.all()
