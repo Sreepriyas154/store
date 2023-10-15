@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from api.models import Books
-from api.models import Reviews
+from api.models import Reviews,Carts
 from django.contrib.auth.models import User
+
 
 
 class BookSerialzers(serializers.Serializer):
@@ -74,4 +75,13 @@ class Userserializer(serializers.ModelSerializer):
         return user
 
 
+
+class Cartserializer(serializers.ModelSerializer):
+    book=serializers.CharField(read_only=True)
+    user=serializers.CharField(read_only=True)
+    status=serializers.CharField(read_only=True)
+
+    class Meta:
+         models=Carts
+         fields=["book","user","status"]
 

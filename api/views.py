@@ -245,6 +245,15 @@ class Productmodelviewsetview(ModelViewSet):
         return Response(data="created")
     @action(methods=["get"],detail=True)
     def get_review(self,request,*args,**kwargs):
+        id=kwargs.get("pk")
+        qs=Books.objects.get(id=id)
+        reviews=qs.reviews_set.all()
+        serializer=ReviewSerializer(reviews,many=True)
+        return Response(data=serializer.data)
+    @action(method=["post"],detail=True)
+    def
+
+
 
 
 class Reviewmodelviewsetview(ModelViewSet):
