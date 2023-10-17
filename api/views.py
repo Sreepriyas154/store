@@ -4,12 +4,13 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from api.models import Books,Reviews
-from api.serializers import BookSerialzers,ReviewSerializer
+from api.serializers import BookSerialzers,ReviewSerializer,Cartserializer
 from rest_framework.viewsets import ViewSet,ModelViewSet
 from api.serializers import Userserializer
 from django.contrib.auth.models import User
 from rest_framework import authentication,permissions
 from  rest_framework.decorators import action
+from api.models import Carts
 # class Productsview(APIView):
 #     def get(self,request,*args,**kwargs):
 #         return Response({"msg":"inside the product"})
@@ -196,7 +197,7 @@ class Reviewdetailsview(APIView):
 
 
 class Productsviewsetview(ViewSet):
-    authentication_classes = [authentication.BasicAuthentication]
+    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     def list(self,request,*args,**kwargs):
         qs=Books.objects.all()
@@ -233,7 +234,7 @@ class Productsviewsetview(ViewSet):
 class Productmodelviewsetview(ModelViewSet):
     serializer_class = BookSerialzers
     queryset = Books.objects.all()
-    authentication_classes = [authentication.BasicAuthentication]
+    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     @action(methods=["post"],detail=True)
@@ -250,10 +251,21 @@ class Productmodelviewsetview(ModelViewSet):
         reviews=qs.reviews_set.all()
         serializer=ReviewSerializer(reviews,many=True)
         return Response(data=serializer.data)
-    @action(method=["post"],detail=True)
-    def
 
+    @action(methods=["post"], detail=True)
+    def add_to_cart(self, request, *args, **kwargs):
+        id = kwargs.get("pk")
+        qs = Books.objects.get(id=id)
+        user = request.user
+        Carts.objects.create(book=qs, user=user, status=request.data.get("options"))
+        return Response(data="created")
 
+    # @action(methods=["get"], detail=True)
+    # def cart_list(self, request, *args, **kwargs):
+    #     cart=Carts.objects.all()
+    #     cartlist = cart.books_set.all()
+    #     serializer = Cartserializer(cartlist, many=True)
+    #     return Response(data=serializer)
 
 
 class Reviewmodelviewsetview(ModelViewSet):
